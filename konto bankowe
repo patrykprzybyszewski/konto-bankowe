@@ -1,0 +1,109 @@
+class Konto_Bankowe:
+    def __init__(self, imie, nazwisko, numer_konta, saldo, waluta_rozliczeniowa):
+        self.imie = imie
+        self.nazwisko = nazwisko
+        self.numer_konta = numer_konta
+        self.saldo = saldo
+        self.waluta_rozliczeniowa = waluta_rozliczeniowa
+
+    def wplac_srodki(self, kwota):
+        self.saldo += kwota
+        print(f"Wpłata {kwota} {self.waluta_rozliczeniowa} na konto {self.numer_konta} została zrealizowana")
+
+    def wyplac_srodki(self, kwota):
+        if self.saldo >= kwota:
+            self.saldo -= kwota
+            print(f"Wypłata {kwota} {self.waluta_rozliczeniowa} z konta {self.numer_konta} została zrealizowana")
+        else:
+            print("Brak środków na koncie")
+
+    def sprawdz_stan_konta(self):
+        print(f"Stan konta {self.numer_konta}: {self.saldo} {self.waluta_rozliczeniowa}")
+
+    def wyswietl_informacje_o_koncie(self):
+        print("Wyświetl informacje o koncie\n"
+              f"Imię: {self.imie}\n"
+              f"Nazwisko: {self.nazwisko}\n"
+              f"Numer konta: {self.numer_konta}\n"
+              f"Saldo: {self.saldo} {self.waluta_rozliczeniowa}\n"
+              f"Waluta: {self.waluta_rozliczeniowa}")
+
+def main():
+    konto1 = Konto_Bankowe("Jan", "Kowalski", "123456789", 1000, "PLN")
+    konto2 = Konto_Bankowe("Anna", "Nowak", "987654321", 2000, "PLN")
+
+    konta = [konto1, konto2]
+
+    def wplac_srodki(konto):
+        try:
+            kwota = float(input("Podaj kwotę do wpłaty: "))
+            konto.wplac_srodki(kwota)
+        except ValueError:
+            print("Niepoprawna kwota.")
+
+    def wyplac_srodki(konto):
+        try:
+            kwota = float(input("Podaj kwotę do wypłaty: "))
+            konto.wyplac_srodki(kwota)
+        except ValueError:
+            print("Niepoprawna kwota.")
+
+    def sprawdz_stan_konta(konto):
+        konto.sprawdz_stan_konta()
+
+    def wyswietl_informacje_o_koncie(konto):
+        konto.wyswietl_informacje_o_koncie()
+
+    actions = {
+        '1': wplac_srodki,
+        '2': wyplac_srodki,
+        '3': sprawdz_stan_konta,
+        '4': wyswietl_informacje_o_koncie
+    }
+
+    def wybierz_konto():
+        print("\nWybierz konto:")
+        for i, konto in enumerate(konta, start=1):
+            print(f"{i}. {konto.numer_konta} ({konto.imie} {konto.nazwisko})")
+
+        try:
+            wybierz_konto = int(input("Wybierz numer konta (0 aby zakończyć): ")) - 1
+            if wybierz_konto == -1:
+                return None
+            if wybierz_konto < 0 or wybierz_konto >= len(konta):
+                print("Niepoprawny numer konta.")
+                return wybierz_konto()
+            return konta[wybierz_konto]
+        except ValueError:
+            print("Niepoprawny numer konta.")
+            return wybierz_konto()
+
+    running = True
+    while running:
+        konto = wybierz_konto()
+        if konto is None:
+            break
+
+        while True:
+            print("\nWybierz operację:\n"
+                  "1. Wpłata środków\n"
+                  "2. Wypłata środków\n"
+                  "3. Sprawdzenie salda\n"
+                  "4. Wyświetlenie informacji o koncie\n"
+                  "5. Powrót do wyboru konta\n"
+                  "6. Wyjście z programu")
+
+            choice = input("Wybierz operację: ")
+
+            if choice == '5':
+                break
+            elif choice == '6':
+                running = False
+                break
+            elif choice in actions:
+                actions[choice](konto)
+            else:
+                print("Niepoprawny wybór operacji.")
+
+if __name__ == "__main__":
+    main()
